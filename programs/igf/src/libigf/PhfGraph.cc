@@ -11,7 +11,7 @@
 #include "PhfNode.h"
 #include "PhfEdge.h"
 #include "FuncVect.h"
-#include "YmUtils/BtgMatch.h"
+#include "YmAlgo/BtgMatch.h"
 
 
 #define VERIFY_ACYCLIC_CHECK 0

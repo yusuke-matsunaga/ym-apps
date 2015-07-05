@@ -5,6 +5,7 @@
 include_directories (
   ${PROJECT_SOURCE_DIR}/include
   ${PROJECT_BINARY_DIR}
+  ${YmTools_INCLUDE_DIRS}
   include
   )
 
@@ -41,6 +42,7 @@ add_executable(igugen
 
 target_link_libraries(igugen
   libigf
+  ym_algo
   ym_utils
   )
 
