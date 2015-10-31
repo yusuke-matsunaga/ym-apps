@@ -17,6 +17,9 @@ BEGIN_NAMESPACE_YM_IGF
 //////////////////////////////////////////////////////////////////////
 /// @class RegVect RegVect.h "RegVect.h"
 /// @brief 登録ベクタを表すクラス
+///
+/// 実際に確保されるサイズは sizeof(RegVect) と異なるので RvMgr 以外が
+/// このクラスのインスタンスを生成することを禁止している．
 //////////////////////////////////////////////////////////////////////
 class RegVect
 {
@@ -52,6 +55,10 @@ public:
   ymuint
   val(ymuint pos) const;
 
+  /// @brief ハッシュ値を返す．
+  ymuint
+  hash() const;
+
   /// @brief 内容を出力する．
   /// @param[in] s 出力先のストリーム
   void
@@ -64,10 +71,10 @@ private:
   //////////////////////////////////////////////////////////////////////
 
   // サイズ
-  ymuint32 mSize;
+  ymuint mSize;
 
   // インデックス
-  ymuint32 mIndex;
+  ymuint mIndex;
 
   // ベクタの本体
   // 実際には必要なサイズが確保される．

@@ -4,6 +4,10 @@
 cmake_minimum_required (VERSION 3.0)
 
 
+# C++11 の指定
+set (CMAKE_CXX_STANDARD 11)
+
+
 # ===================================================================
 # プロジェクト名，バージョンの設定
 # ===================================================================
@@ -12,18 +16,10 @@ set (YMAPPS_VERSION_MAJOR 1)
 set (YMAPPS_VERSION_MINOR 0)
 set (YMAPPS_VERSION "${YMAPPS_VERSION_MAJOR}.${YMAPPS_VERSION_MINOR}")
 
-# リリースモード
-#set (CMAKE_BUILD_TYPE RELEASE)
-
-# デバッグモード
-#set (CMAKE_BUILD_TYPE DEBUG)
-
 
 # ===================================================================
 # オプション
 # ===================================================================
-
-option (OPT_GPERFTOOLS "use google-perftools" OFF)
 
 option (BUILD_IGF      "build igf" ON)
 option (BUILD_BNET2AIG "build bnet2aig" ON)
@@ -31,15 +27,11 @@ option (BUILD_MAKEBDD  "build makebdd" ON)
 
 
 # ===================================================================
-# CTest モジュールの読み込み
-# ===================================================================
-include (CTest)
-
-
-# ===================================================================
 # パッケージの検査
 # ===================================================================
-list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list ( APPEND CMAKE_MODULE_PATH
+  "${PROJECT_SOURCE_DIR}/ym-common/cmake"
+  )
 
 include (FindDoxygen)
 
@@ -70,7 +62,30 @@ include (FindPOPT)
 
 include (FindReadline)
 
+find_package(Gperftools)
+
 find_package(YmTools REQUIRED)
+
+if (TCL_FOUND)
+  find_package(YmTclpp)
+endif (TCL_FOUND)
+
+include (ym_add_library)
+
+
+# ===================================================================
+# google-test は内蔵のものを使う．
+# ===================================================================
+include ( ym_use_gtest )
+ym_use_gtest ()
+
+
+# ===================================================================
+# CTest モジュールの読み込み
+# ===================================================================
+include (CTest)
+
+enable_testing()
 
 
 # ===================================================================

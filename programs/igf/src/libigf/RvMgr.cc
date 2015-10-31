@@ -11,7 +11,27 @@
 #include "RegVect.h"
 #include "InputFunc.h"
 #include "FuncVect.h"
+#include "YmUtils/HashFunc.h"
+#include "YmUtils/HashSet.h"
 
+
+BEGIN_NAMESPACE_YM
+
+//////////////////////////////////////////////////////////////////////
+// HashFunc<RegVect*> の特殊化
+//////////////////////////////////////////////////////////////////////
+template<>
+struct
+HashFunc<nsIgf::RegVect*>
+{
+  ymuint
+  operator()(nsIgf::RegVect* key) const
+  {
+    return key->hash();
+  }
+};
+
+END_NAMESPACE_YM
 
 BEGIN_NAMESPACE_YM_IGF
 
@@ -77,6 +97,7 @@ RvMgr::read_data(istream& s)
   mVectList.clear();
   mVectList.reserve(k);
 
+  HashSet<RegVect*> vect_hash;
   for (ymuint i = 0; i < k; ++ i) {
     string buf;
     if ( !getline(s, buf) ) {
@@ -105,30 +126,13 @@ RvMgr::read_data(istream& s)
 	rv->mBody[blk] |= (1ULL << sft);
       }
     }
-    bool found = false;
-#if 0
-    for (vector<const RegVect*>::iterator p = mVectList.begin();
-	 p != mVectList.end(); ++ p) {
-      const RegVect* rv1 = *p;
-      bool diff = false;
-      for (ymuint j = 0; j < mBlockSize; ++ j) {
-	if ( rv1->mBody[j] != rv->mBody[j] ) {
-	  diff = true;
-	  break;
-	}
-      }
-      if ( !diff ) {
-	found = true;
-	break;
-      }
-    }
-#endif
-    if ( found ) {
+    if ( vect_hash.check(rv) ) {
       // 重複したデータ
       delete_vector(rv);
     }
     else {
       mVectList.push_back(rv);
+      vect_hash.add(rv);
     }
   }
 
@@ -220,6 +224,21 @@ RvMgr::dump(ostream& s) const
 //////////////////////////////////////////////////////////////////////
 // クラス RegVect
 //////////////////////////////////////////////////////////////////////
+
+// @brief ハッシュ値を返す．
+ymuint
+RegVect::hash() const
+{
+  ymuint val = 0;
+  ymuint nblk = (size() + 63) / 64;
+  for (ymuint i = 0; i < nblk; ++ i) {
+    ymuint64 tmp = mBody[i];
+    ymuint val1 = tmp & 0xFFFFFFFFUL;
+    ymuint val2 = (tmp >> 32) & 0xFFFFFFFFUL;
+    val = val * 13 + val1 * 7 + val2;
+  }
+  return val;
+}
 
 // @brief 内容を出力する．
 // @param[in] s 出力先のストリーム
