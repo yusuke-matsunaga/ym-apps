@@ -21,7 +21,6 @@ set (YMAPPS_VERSION "${YMAPPS_VERSION_MAJOR}.${YMAPPS_VERSION_MINOR}")
 # オプション
 # ===================================================================
 
-option (BUILD_IGF      "build igf" ON)
 option (BUILD_BNET2AIG "build bnet2aig" ON)
 option (BUILD_MAKEBDD  "build makebdd" ON)
 
@@ -95,10 +94,6 @@ enable_testing()
 if (BUILD_BNET2AIG)
   add_subdirectory (programs/bnet2aig)
 endif (BUILD_BNET2AIG)
-
-if (BUILD_IGF)
-  add_subdirectory (programs/igf)
-endif (BUILD_IGF)
 
 if (BUILD_MAKEBDD)
   add_subdirectory (programs/makebdd)
